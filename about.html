@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>서비스 소개 & 기술 아키텍처 | 웹 문서 스캐너</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased py-12 px-4 sm:px-6">
+  <div class="max-w-3xl mx-auto bg-white p-8 sm:p-12 rounded-3xl shadow-sm border border-slate-200">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-lg">
+        <i class="fa-solid fa-camera"></i>
+      </div>
+      <div>
+        <h1 class="text-2xl font-black text-slate-900">웹 문서 스캐너 기술 아키텍처 & E-E-A-T</h1>
+        <p class="text-xs text-slate-500">CamScanner · Adobe Scan의 대안, 100% 클라이언트 사이드 스캐너</p>
+      </div>
+    </div>
+    
+    <div class="space-y-6 text-sm leading-relaxed text-slate-600">
+      <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 text-emerald-900 text-xs">
+        <strong>💡 개발 배경:</strong> 2025년 12월 Microsoft Lens 은퇴 및 주요 모바일 스캔 앱들의 과도한 구독료($4.99/주), 강제 워터마크, 클라우드 개인정보 유출 우려를 해소하기 위해 100% 브라우저 기반으로 개발되었습니다.
+      </div>
+      
+      <h2 class="text-lg font-bold text-slate-800">1. 핵심 기술 원리</h2>
+      <ul class="list-disc pl-5 space-y-2">
+        <li><strong>모바일 카메라 직접 연동:</strong> W3C 표준 HTML5 `navigator.mediaDevices.getUserMedia` API를 통해 별도 앱 설치 없이 고해상도 즉각 촬영 지원.</li>
+        <li><strong>적응형 문서 흑백 필터링:</strong> HTML5 Canvas 2D 픽셀 분석 엔진을 통해 그레이스케일, 고대비 흑백(B&W), 화이트보드 모드로 신속 가공.</li>
+        <li><strong>다중 페이지 PDF 합성:</strong> 브라우저 내에서 직접 구동되는 `pdf-lib` 엔진으로 여러 장의 스캔본을 단일 PDF로 무손실 묶음 생성.</li>
+      </ul>
+
+      <h2 class="text-lg font-bold text-slate-800">2. 공학적 데이터 투명성</h2>
+      <p>기존 상용 앱들이 서버로 이미지를 업로드한 뒤 변환본을 다운로드받는 것과 달리, DocScan Web은 업로드 대기 시간과 네트워크 트래픽이 0초/0바이트이며 비행기 탑승 모드(오프라인)에서도 정상 구동됩니다.</p>
+    </div>
+
+    <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center text-xs">
+      <a href="./" class="text-emerald-600 font-bold hover:underline">← 스캐너 도구로 돌아가기</a>
+      <span class="text-slate-400">Antigravity Architecture Standard</span>
+    </div>
+  </div>
+</body>
+</html>

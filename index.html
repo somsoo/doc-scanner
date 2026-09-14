@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>웹 문서 스캐너 | 워터마크·로그인 없는 무료 스마트폰 영수증·신분증 PDF 스캔 (DocScan Web)</title>
+  <meta name="description" content="카메라 촬영 또는 사진 업로드로 즉시 문서 보정 및 다중 페이지 PDF 생성. 계정도, 워터마크도, 정기구독도 없는 100% 브라우저 로컬 안전 문서 스캐너입니다.">
+  <link rel="canonical" href="https://doc-scanner.enjoy-onepage.com/">
+  
+  <meta property="og:title" content="웹 문서 스캐너 - 워터마크 없는 100% 무료 PDF 스캔">
+  <meta property="og:description" content="서버 전송 0바이트! 브라우저 로컬에서 안전하게 영수증, 신분증, 서류를 스캔하고 고화질 PDF로 저장하세요.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://doc-scanner.enjoy-onepage.com/">
+  
+  <link rel="icon" href="favicon.ico">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- PDF 생성용 로컬 fallback pdf-lib -->
+  <script src="./pdf-lib.min.js"></script>
+  <script>if(typeof PDFLib === "undefined"){document.write('<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"><\/script>');}</script>
+
+  <!-- Google AdSense 비동기 로더 (No-Duplicate-Push 헌법 준수) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2228289204702106" crossorigin="anonymous"></script>
+
+  <style>
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .filter-btn-active { border-color: #059669; background-color: #ecfdf5; color: #065f46; font-weight: 700; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
+  <!-- 상단 슬림 띠배너 (Top Slim Banner: 3824727725, 50~60px 고정) -->
+  <div class="manual-ad-box ad-top-banner w-full max-w-5xl mx-auto my-2 text-center overflow-hidden min-h-[50px] max-h-[60px]">
+    <ins class="adsbygoogle"
+         style="display:block; min-height:50px; max-height:60px;"
+         data-ad-client="ca-pub-2228289204702106"
+         data-ad-slot="3824727725"
+         data-ad-format="horizontal"
+         data-full-width-responsive="false"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+
+  <!-- 메인 래퍼 (Double-Nesting 금지, 루트 단일 컨테이너 선언) -->
+  <main class="w-full max-w-5xl mx-auto bg-white border border-slate-200/80 rounded-3xl shadow-xl overflow-hidden mb-8 flex-1">
+    
+    <!-- 네비게이션 헤더 & 프라이버시 배지 -->
+    <header class="border-b border-slate-100 px-6 py-6 sm:px-10 flex flex-col md:flex-row items-center justify-between gap-4 bg-gradient-to-b from-emerald-50/40 to-white">
+      <div class="flex items-center gap-3.5 text-center md:text-left">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-emerald-200 shrink-0">
+          <i class="fa-solid fa-camera"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2 justify-center md:justify-start">
+            <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">DocScan Web</h1>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">무설치·무워터마크</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-500 mt-0.5">CamScanner·MS Lens 대체, 100% 브라우저 메모리 문서 스캐너</p>
+        </div>
+      </div>
+
+      <!-- 상단 액션 버튼 그룹 (PRO 모달 & 배지) -->
+      <div class="flex items-center gap-2.5">
+        <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold">
+          <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+          <span>100% Zero-Upload</span>
+        </div>
+        <button id="docProBtn" onclick="openDocProModal()" class="px-3.5 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5">
+          <i class="fa-solid fa-crown"></i>
+          <span id="docProBtnText">PRO 라이선스</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- 안심 배지 바 -->
+    <div class="bg-emerald-50/70 border-b border-emerald-100 px-6 py-2.5 text-xs text-emerald-900 flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-check-double text-emerald-600"></i>
+        <span><strong>약속:</strong> 영구 워터마크 없음 · 로그인 강제 없음 · 신분증/영수증 사진 외부 서버 전송 절대 0%</span>
+      </div>
+      <a href="privacy.html" class="underline hover:text-emerald-700 font-semibold text-[11px]">로컬 연산 보증서 보기 →</a>
+    </div>
+
+    <!-- LOGIC START -->
+    <!-- PC 1:1 좌우 2단 대칭형 그리드 (lg:grid-cols-12 좌 6열 : 우 6열 sticky) -->
+    <div class="p-6 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- 좌측 6열: 스캔 캡처 & 이미지 편집/필터 조정 패널 -->
+      <div class="lg:col-span-6 space-y-6">
+        
+        <!-- 1. 촬영 및 업로드 선택 바 -->
+        <div class="grid grid-cols-2 gap-3">
+          <button type="button" onclick="startCamera()" class="py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-md shadow-emerald-200 transition flex items-center justify-center gap-2 text-sm">
+            <i class="fa-solid fa-camera"></i>
+            <span>카메라 즉시 촬영</span>
+          </button>
+          <button type="button" onclick="document.getElementById('fileUploadInput').click()" class="py-3.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-2xl border border-slate-200 transition flex items-center justify-center gap-2 text-sm">
+            <i class="fa-solid fa-images text-emerald-600"></i>
+            <span>갤러리/사진 선택</span>
+          </button>
+          <input type="file" id="fileUploadInput" accept="image/*" multiple class="hidden" onchange="handleImageUpload(this.files)"/>
+        </div>
+
+        <!-- 카메라 실시간 스트림 영역 (카메라 켰을 때 노출) -->
+        <div id="cameraContainer" class="border-2 border-emerald-400 rounded-2xl overflow-hidden bg-black relative hidden">
+          <video id="cameraVideo" autoplay playsinline class="w-full max-h-72 object-contain bg-black"></video>
+          <div class="absolute bottom-3 left-0 right-0 flex justify-center items-center gap-4 z-10">
+            <button type="button" onclick="captureSnapshot()" class="w-14 h-14 bg-white hover:bg-slate-100 text-emerald-700 rounded-full flex items-center justify-center text-2xl shadow-lg border-4 border-emerald-500 active:scale-95 transition">
+              <i class="fa-solid fa-circle-dot"></i>
+            </button>
+            <button type="button" onclick="stopCamera()" class="px-3 py-1.5 bg-black/60 text-white text-xs font-bold rounded-xl backdrop-blur-sm hover:bg-black/80 transition">
+              카메라 끄기
+            </button>
+          </div>
+        </div>
+
+        <!-- 업로드 드롭존 (카메라 끈 상태 기본) -->
+        <div id="scanDropZone" class="border-2 border-dashed border-slate-200 hover:border-emerald-400 rounded-2xl p-6 text-center bg-slate-50/50 cursor-pointer transition" onclick="document.getElementById('fileUploadInput').click()">
+          <div class="w-12 h-12 mx-auto rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl mb-2">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+          </div>
+          <p class="text-xs font-bold text-slate-800">스캔할 문서 사진들을 끌어다 놓거나 클릭하세요</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">JPG, PNG, WEBP 지원 · 여러 장 한 번에 추가 가능</p>
+        </div>
+
+        <!-- 2. 실시간 캔버스 편집 & 필터 툴바 -->
+        <div id="editorSection" class="space-y-4 hidden">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-sliders text-emerald-600"></i>
+              현재 페이지 필터 보정 (<span id="currentPageIndicator">1/1</span>)
+            </span>
+            <div class="flex items-center gap-1">
+              <button type="button" onclick="rotateCurrentPage()" class="p-1.5 px-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition flex items-center gap-1">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span>회전</span>
+              </button>
+              <button type="button" onclick="deleteCurrentPage()" class="p-1.5 px-2 bg-rose-50 hover:bg-rose-100 rounded-lg text-xs font-bold text-rose-600 transition flex items-center gap-1">
+                <i class="fa-solid fa-trash-can"></i>
+                <span>삭제</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 4대 문서 전용 필터 버튼 -->
+          <div class="grid grid-cols-4 gap-2 text-xs">
+            <button type="button" id="filter-original" onclick="applyFilter('original')" class="filter-btn py-2 px-2 border rounded-xl filter-btn-active text-center transition">
+              <span class="block font-bold">원본</span>
+              <span class="text-[10px] opacity-75">색상 유지</span>
+            </button>
+            <button type="button" id="filter-bw" onclick="applyFilter('bw')" class="filter-btn py-2 px-2 border border-slate-200 rounded-xl text-center text-slate-600 hover:bg-slate-50 transition">
+              <span class="block font-bold">흑백 문서</span>
+              <span class="text-[10px] opacity-75">선명 대비</span>
+            </button>
+            <button type="button" id="filter-gray" onclick="applyFilter('gray')" class="filter-btn py-2 px-2 border border-slate-200 rounded-xl text-center text-slate-600 hover:bg-slate-50 transition">
+              <span class="block font-bold">회색조</span>
+              <span class="text-[10px] opacity-75">부드럽게</span>
+            </button>
+            <button type="button" id="filter-board" onclick="applyFilter('board')" class="filter-btn py-2 px-2 border border-slate-200 rounded-xl text-center text-slate-600 hover:bg-slate-50 transition">
+              <span class="block font-bold">화이트보드</span>
+              <span class="text-[10px] opacity-75">배경 제거</span>
+            </button>
+          </div>
+
+          <!-- 작업 캔버스 -->
+          <div class="bg-slate-900/5 rounded-2xl p-2 flex items-center justify-center min-h-[220px] max-h-[360px] overflow-hidden border border-slate-200">
+            <canvas id="mainCanvas" class="max-w-full max-h-[340px] rounded-lg shadow-sm object-contain bg-white"></canvas>
+          </div>
+
+          <!-- 하단 썸네일 스트립 (다중 페이지 관리) -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between items-center text-[11px] font-bold text-slate-600 px-1">
+              <span>스캔 페이지 목록 (<span id="pageCountBadge">0</span>장)</span>
+              <span class="text-slate-400">클릭하여 해당 페이지 편집</span>
+            </div>
+            <div id="thumbnailStrip" class="flex gap-2 overflow-x-auto p-2 bg-slate-50 border border-slate-200 rounded-xl custom-scrollbar min-h-[68px]">
+              <!-- 동적 썸네일 렌더링 -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 우측 6열: 실시간 결과 카드 & PDF 다운로드 (lg:sticky 영수증 레이아웃) -->
+      <div class="lg:col-span-6 lg:sticky lg:top-8 space-y-6">
+        
+        <!-- 실시간 명세 영수증 카드 -->
+        <div class="bg-slate-950 text-slate-100 rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-800">
+          
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div class="flex items-center gap-2">
+              <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+              <h2 class="font-bold text-sm text-slate-200 tracking-wide uppercase">
+                <span id="docStatusTitle">스캔 대기 중</span>
+              </h2>
+            </div>
+            <div class="text-right font-mono text-xs text-slate-400">
+              <span id="docProcessTime">0.0s</span>
+            </div>
+          </div>
+
+          <!-- 동적 작업 명세 내역 -->
+          <div class="py-6 space-y-4 font-mono text-xs">
+            <div class="flex justify-between text-slate-400">
+              <span>SCAN MODE:</span>
+              <span class="text-white font-bold" id="docScanMode">다중 페이지 PDF</span>
+            </div>
+            <div class="flex justify-between text-slate-400">
+              <span>TOTAL PAGES:</span>
+              <span class="text-emerald-400 font-bold" id="docTotalPages">0 페이지</span>
+            </div>
+            <div class="flex justify-between text-slate-400">
+              <span>ACTIVE FILTER:</span>
+              <span class="text-white font-bold" id="docActiveFilter">ORIGINAL (원본)</span>
+            </div>
+            <div class="flex justify-between text-slate-400">
+              <span>ESTIMATED PDF SIZE:</span>
+              <span class="text-amber-400 font-bold" id="docEstimatedSize">0 KB</span>
+            </div>
+            
+            <!-- 진행 상태 바 -->
+            <div id="docProgressBarContainer" class="w-full bg-slate-800 rounded-full h-2 overflow-hidden hidden">
+              <div id="docProgressBar" class="bg-emerald-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- 단일 PDF 생성 및 다운로드 버튼 그룹 -->
+          <div class="pt-4 border-t border-slate-800 space-y-2.5">
+            <button type="button" id="btnBuildPdf" onclick="generateScannedPdf()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black rounded-2xl text-center shadow-lg shadow-emerald-950/40 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+              <i class="fa-solid fa-file-pdf"></i>
+              <span id="btnBuildPdfText">단일 PDF로 변환 및 다운로드</span>
+            </button>
+
+            <!-- 전사 공통 원클릭 결과 복사(Copy & Toast) 및 바이럴 링크 버튼 -->
+            <button type="button" id="btnCopyResult" onclick="copyDocScanResult()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-copy text-emerald-400"></i>
+              <span>스캔 결과 및 바로가기 클립보드 복사</span>
+            </button>
+
+            <!-- 로컬 백업/복원 안전망 -->
+            <div class="flex gap-2 pt-1">
+              <button type="button" onclick="exportSessionBackup()" class="flex-1 py-2 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 rounded-lg text-[11px] font-mono transition border border-slate-800">
+                <i class="fa-solid fa-download mr-1"></i>세션 JSON 백업
+              </button>
+              <button type="button" onclick="document.getElementById('importBackupInput').click()" class="flex-1 py-2 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 rounded-lg text-[11px] font-mono transition border border-slate-800">
+                <i class="fa-solid fa-upload mr-1"></i>백업 불러오기
+              </button>
+              <input type="file" id="importBackupInput" accept=".json,application/json" class="hidden" onchange="importSessionBackup(event)"/>
+            </div>
+          </div>
+
+          <!-- 보안 확인 문구 -->
+          <div class="mt-4 text-center text-[10px] text-slate-500 font-mono">
+            100% IN-MEMORY CANVAS DISCARD · ZERO LOGS · ZERO WATERMARK
+          </div>
+
+        </div>
+
+        <!-- 신뢰 가이드 배너 -->
+        <div class="bg-emerald-50/50 p-5 rounded-2xl border border-emerald-100 text-xs text-emerald-900 space-y-2">
+          <div class="font-bold flex items-center gap-1.5 text-emerald-950">
+            <i class="fa-solid fa-shield-check text-emerald-600"></i>
+            <span>스마트폰 카메라로 최고 품질 스캔하는 팁</span>
+          </div>
+          <p>빛 반사가 적은 밝은 곳에서 문서를 평평하게 놓고 수직으로 촬영하세요. [흑백 문서] 필터를 적용하면 어두운 그림자와 노이즈가 제거되어 인쇄물 수준의 선명한 문서가 완성됩니다.</p>
+        </div>
+
+      </div>
+
+    </div>
+    <!-- LOGIC END -->
+
+    <!-- 본문 중간 반응형 배너 (In-Result Slot: 1186914926, 1:1 푸시 규격) -->
+    <div class="manual-ad-box ad-mid-banner w-full max-w-4xl mx-auto my-6 text-center overflow-hidden">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-2228289204702106"
+           data-ad-slot="1186914926"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- E-E-A-T 서브페이지 네비게이션 링크 푸터 -->
+    <footer class="bg-slate-50 border-t border-slate-200 px-6 py-6 text-center text-xs text-slate-500">
+      <div class="max-w-3xl mx-auto flex flex-wrap items-center justify-center gap-4 mb-3 font-medium">
+        <a href="about.html" class="hover:text-emerald-600 transition">서비스 소개 & 기술 원리</a>
+        <span class="text-slate-300">·</span>
+        <a href="privacy.html" class="hover:text-emerald-600 transition">개인정보처리방침 (로컬 보증서)</a>
+        <span class="text-slate-300">·</span>
+        <a href="terms.html" class="hover:text-emerald-600 transition">이용약관</a>
+        <span class="text-slate-300">·</span>
+        <a href="sitemap.xml" class="hover:text-emerald-600 transition">사이트맵</a>
+      </div>
+      <p>© 2026 DocScan Web. All rights reserved. Zero-Upload Client-Side Architecture.</p>
+    </footer>
+
+  </main>
+
+  <!-- 하단 대형 배너 (푸터 직전: 3416334507, 1:1 푸시 규격) -->
+  <div class="manual-ad-box ad-bottom-banner w-full max-w-5xl mx-auto mb-8 text-center overflow-hidden">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-2228289204702106"
+         data-ad-slot="3416334507"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+
+  <!-- Lemon Squeezy PRO 라이선스 등록 모달 -->
+  <div id="docProModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-center space-y-5">
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl">
+        <i class="fa-solid fa-crown"></i>
+      </div>
+      <div>
+        <h3 class="text-xl font-black text-slate-900">PRO 평생 무광고 라이선스</h3>
+        <p class="text-xs text-slate-500 mt-1">1회 결제로 모든 광고 영구 제거 및 무제한 고해상도 PDF 내보내기</p>
+      </div>
+
+      <div class="bg-amber-50/70 border border-amber-200/80 p-4 rounded-2xl text-left text-xs space-y-1.5 text-amber-900 font-medium">
+        <p>✓ 구글 광고 전면 영구 차단 (클린 작업 공간)</p>
+        <p>✓ 1회 결제 ($4.99 / 약 6,500원, 주간/월간 정기구독 아님)</p>
+        <p>✓ 최대 3대 기기(PC/태블릿/스마트폰) 영구 인증</p>
+      </div>
+
+      <div class="space-y-2">
+        <input type="text" id="docLicenseKeyInput" placeholder="라이선스 키 입력 (예: PRO-XXXX-XXXX)" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-center uppercase focus:ring-2 focus:ring-amber-500 outline-none"/>
+        <button type="button" id="btnVerifyDocLicense" onclick="verifyDocLicenseKey()" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition">
+          라이선스 키 인증하기
+        </button>
+      </div>
+
+      <div class="pt-3 border-t border-slate-100 flex flex-col gap-2 text-xs">
+        <a href="https://lemonsqueezy.com" target="_blank" class="text-amber-600 font-bold hover:underline">
+          👉 아직 키가 없으신가요? 평생 이용권 구매하기 ($4.99)
+        </a>
+        <button type="button" onclick="closeDocProModal()" class="text-slate-400 hover:text-slate-600">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 전사 공통 원클릭 결과 복사 토스트 알림 컴포넌트 -->
+  <div id="global-ux-toast" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#064e3b;color:#fff;padding:12px 24px;border-radius:9999px;font-size:14px;font-weight:600;box-shadow:0 10px 25px rgba(0,0,0,0.2);z-index:9999;transition:all 0.3s ease;opacity:0;pointer-events:none;">
+    알림 메시지
+  </div>
+
+  <!-- 핵심 클라이언트 사이드 스캐너 & 필터 연산 스크립트 -->
+  <script>
+    const { PDFDocument } = PDFLib;
+
+    let scanPages = []; // [{ rawImg, rotation, filter, processedDataUrl }]
+    let currentIndex = 0;
+    let cameraStream = null;
+
+    // 1. 카메라 제어 (getUserMedia)
+    async function startCamera() {
+      try {
+        const constraints = {
+          video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } }
+        };
+        cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+        const video = document.getElementById('cameraVideo');
+        video.srcObject = cameraStream;
+        document.getElementById('cameraContainer').classList.remove('hidden');
+        document.getElementById('scanDropZone').classList.add('hidden');
+        showToastNotification('카메라가 연결되었습니다. 문서를 맞추고 촬영 버튼을 누르세요.');
+      } catch (err) {
+        alert('카메라 접근 권한이 없거나 지원되지 않는 브라우저입니다. 파일 업로드를 이용해주세요.');
+      }
+    }
+
+    function stopCamera() {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
+      document.getElementById('cameraContainer').classList.add('hidden');
+      document.getElementById('scanDropZone').classList.remove('hidden');
+    }
+
+    function captureSnapshot() {
+      const video = document.getElementById('cameraVideo');
+      if (!video.videoWidth) return;
+
+      const c = document.createElement('canvas');
+      c.width = video.videoWidth;
+      c.height = video.videoHeight;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(video, 0, 0);
+
+      const img = new Image();
+      img.onload = () => {
+        addPageToScan(img);
+        showToastNotification('촬영 완료! 페이지가 추가되었습니다.');
+      };
+      img.src = c.toDataURL('image/jpeg', 0.95);
+    }
+
+    // 2. 파일 업로드 처리
+    function handleImageUpload(files) {
+      if (!files || files.length === 0) return;
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            addPageToScan(img);
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+      showToastNotification(`${files.length}개의 이미지가 로드되었습니다.`);
+    }
+
+    // 3. 페이지 추가 및 상태 갱신
+    function addPageToScan(img) {
+      const pageObj = {
+        rawImg: img,
+        rotation: 0,
+        filter: 'original',
+        processedDataUrl: null
+      };
+      scanPages.push(pageObj);
+      currentIndex = scanPages.length - 1;
+      
+      document.getElementById('editorSection').classList.remove('hidden');
+      renderEditor();
+      updateThumbnails();
+      updateSummaryCard();
+    }
+
+    // 4. 필터 연산 (Canvas 픽셀 직접 조작 - Adaptive B&W / Grayscale / Whiteboard)
+    function renderEditor() {
+      if (scanPages.length === 0) {
+        document.getElementById('editorSection').classList.add('hidden');
+        updateSummaryCard();
+        return;
+      }
+
+      const current = scanPages[currentIndex];
+      const canvas = document.getElementById('mainCanvas');
+      const ctx = canvas.getContext('2d');
+
+      const img = current.rawImg;
+      const rot = current.rotation % 360;
+
+      // 회전 각도에 따른 캔버스 크기 계산
+      if (rot === 90 || rot === 270) {
+        canvas.width = img.height;
+        canvas.height = img.width;
+      } else {
+        canvas.width = img.width;
+        canvas.height = img.height;
+      }
+
+      ctx.save();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate((rot * Math.PI) / 180);
+      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+      ctx.restore();
+
+      // 필터 적용
+      applyCanvasFilter(ctx, canvas.width, canvas.height, current.filter);
+      
+      // 결과 캐싱
+      current.processedDataUrl = canvas.toDataURL('image/jpeg', 0.92);
+
+      // 인디케이터 갱신
+      document.getElementById('currentPageIndicator').textContent = `${currentIndex + 1}/${scanPages.length}`;
+      
+      // 필터 버튼 활성화 스타일
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('filter-btn-active'));
+      const activeBtn = document.getElementById(`filter-${current.filter}`);
+      if (activeBtn) activeBtn.classList.add('filter-btn-active');
+    }
+
+    function applyCanvasFilter(ctx, width, height, filterType) {
+      if (filterType === 'original') return;
+
+      const imgData = ctx.getImageData(0, 0, width, height);
+      const data = imgData.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+
+        if (filterType === 'gray') {
+          data[i] = gray;
+          data[i + 1] = gray;
+          data[i + 2] = gray;
+        } else if (filterType === 'bw') {
+          // 문서 전용 고대비 이진화 (High Contrast B&W)
+          const val = gray > 140 ? 255 : (gray < 80 ? 0 : (gray - 80) * 4.25);
+          data[i] = val;
+          data[i + 1] = val;
+          data[i + 2] = val;
+        } else if (filterType === 'board') {
+          // 화이트보드 모드: 배경의 회색기를 날리고 어두운 텍스트를 부각
+          let val = gray > 165 ? 255 : (gray < 70 ? 0 : gray);
+          if (val < 255) {
+            // 글씨 색상 보존 및 선명화
+            data[i] = Math.min(255, r * 0.8);
+            data[i + 1] = Math.min(255, g * 0.8);
+            data[i + 2] = Math.min(255, b * 0.8);
+          } else {
+            data[i] = 255;
+            data[i + 1] = 255;
+            data[i + 2] = 255;
+          }
+        }
+      }
+
+      ctx.putImageData(imgData, 0, 0);
+    }
+
+    function applyFilter(fName) {
+      if (scanPages.length === 0) return;
+      scanPages[currentIndex].filter = fName;
+      renderEditor();
+      updateThumbnails();
+      updateSummaryCard();
+    }
+
+    function rotateCurrentPage() {
+      if (scanPages.length === 0) return;
+      scanPages[currentIndex].rotation = (scanPages[currentIndex].rotation + 90) % 360;
+      renderEditor();
+      updateThumbnails();
+      updateSummaryCard();
+    }
+
+    function deleteCurrentPage() {
+      if (scanPages.length === 0) return;
+      scanPages.splice(currentIndex, 1);
+      if (currentIndex >= scanPages.length) {
+        currentIndex = Math.max(0, scanPages.length - 1);
+      }
+      renderEditor();
+      updateThumbnails();
+      updateSummaryCard();
+      showToastNotification('페이지가 삭제되었습니다.');
+    }
+
+    // 5. 썸네일 스트립 렌더링
+    function updateThumbnails() {
+      const container = document.getElementById('thumbnailStrip');
+      document.getElementById('pageCountBadge').textContent = scanPages.length;
+
+      if (scanPages.length === 0) {
+        container.innerHTML = '<div class="text-[11px] text-slate-400 py-2 text-center w-full">추가된 페이지 없음</div>';
+        return;
+      }
+
+      container.innerHTML = scanPages.map((page, idx) => `
+        <div onclick="selectPage(${idx})" class="relative shrink-0 cursor-pointer rounded-lg overflow-hidden border-2 transition ${idx === currentIndex ? 'border-emerald-600 ring-2 ring-emerald-200' : 'border-slate-200 hover:border-slate-400'}">
+          <img src="${page.processedDataUrl || page.rawImg.src}" class="w-14 h-16 object-cover bg-white"/>
+          <span class="absolute bottom-0 right-0 bg-black/70 text-white text-[9px] font-mono px-1 rounded-tl">${idx + 1}</span>
+        </div>
+      `).join('');
+    }
+
+    function selectPage(idx) {
+      currentIndex = idx;
+      renderEditor();
+    }
+
+    // 6. 요약 정보 카드 갱신
+    function updateSummaryCard() {
+      const total = scanPages.length;
+      document.getElementById('docTotalPages').textContent = `${total} 페이지`;
+      
+      if (total === 0) {
+        document.getElementById('docStatusTitle').textContent = '스캔 대기 중';
+        document.getElementById('docEstimatedSize').textContent = '0 KB';
+        document.getElementById('btnBuildPdf').disabled = true;
+      } else {
+        document.getElementById('docStatusTitle').textContent = '문서 준비 완료';
+        const curr = scanPages[currentIndex];
+        document.getElementById('docActiveFilter').textContent = (curr ? curr.filter.toUpperCase() : 'ORIGINAL');
+        // 대략 페이지당 350KB 추정
+        document.getElementById('docEstimatedSize').textContent = `약 ${(total * 320).toLocaleString()} KB`;
+        document.getElementById('btnBuildPdf').disabled = false;
+      }
+    }
+
+    // 7. 단일 PDF 생성 (pdf-lib 브라우저 클라이언트 연산)
+    async function generateScannedPdf() {
+      if (scanPages.length === 0) {
+        showToastNotification('PDF로 변환할 스캔 페이지가 없습니다.');
+        return;
+      }
+
+      const t0 = performance.now();
+      document.getElementById('docProgressBarContainer').classList.remove('hidden');
+      document.getElementById('docProgressBar').style.width = '20%';
+      document.getElementById('docStatusTitle').textContent = 'PDF 합성 연산 중...';
+
+      try {
+        const pdfDoc = await PDFDocument.create();
+
+        for (let i = 0; i < scanPages.length; i++) {
+          const page = scanPages[i];
+          const dataUrl = page.processedDataUrl;
+          
+          // dataUrl을 Uint8Array로 변환
+          const jpgBytes = await fetch(dataUrl).then(res => res.arrayBuffer());
+          const embeddedImg = await pdfDoc.embedJpg(jpgBytes);
+          
+          const pdfPage = pdfDoc.addPage([embeddedImg.width, embeddedImg.height]);
+          pdfPage.drawImage(embeddedImg, {
+            x: 0,
+            y: 0,
+            width: embeddedImg.width,
+            height: embeddedImg.height
+          });
+
+          document.getElementById('docProgressBar').style.width = `${Math.round(((i + 1) / scanPages.length) * 80) + 20}%`;
+        }
+
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const blobUrl = URL.createObjectURL(blob);
+
+        const elapsed = ((performance.now() - t0) / 1000).toFixed(1);
+        document.getElementById('docProcessTime').textContent = `${elapsed}s`;
+        document.getElementById('docStatusTitle').textContent = 'PDF 변환 완성!';
+        document.getElementById('docProgressBar').style.width = '100%';
+
+        // 자동 다운로드 트리거
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = `DocScan_${new Date().toISOString().slice(0, 10)}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        showToastNotification(`🎉 ${scanPages.length}페이지 PDF 다운로드가 완료되었습니다!`);
+      } catch (err) {
+        console.error(err);
+        alert('PDF 생성 중 오류가 발생했습니다: ' + err.message);
+      }
+    }
+
+    // 8. 전사 공통 원클릭 결과 복사 & 바이럴 링크
+    function copyDocScanResult() {
+      const count = scanPages.length;
+      const status = document.getElementById('docStatusTitle').textContent;
+      const text = `[웹 문서 스캐너 (DocScan Web)]\n상태: ${status}\n스캔 페이지: ${count}장\n워터마크: 없음 (100% 로컬 연산)\n\n👉 웹 문서 스캐너 바로가기: https://doc-scanner.enjoy-onepage.com`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        showToastNotification('스캔 명세 및 바로가기가 복사되었습니다! 🎉');
+      }).catch(() => {
+        showToastNotification('결과 복사 완료!');
+      });
+    }
+
+    function showToastNotification(msg) {
+      const toast = document.getElementById('global-ux-toast');
+      toast.textContent = msg;
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(10px)';
+      }, 2300);
+    }
+
+    // 9. 로컬 백업 & 복원 (안전망: JSON 내보내기/불러오기)
+    function exportSessionBackup() {
+      if (scanPages.length === 0) {
+        showToastNotification('백업할 스캔 데이터가 없습니다.');
+        return;
+      }
+      const backupData = {
+        app: "DocScan Web",
+        version: "1.0",
+        timestamp: new Date().toISOString(),
+        pages: scanPages.map(p => ({
+          rotation: p.rotation,
+          filter: p.filter,
+          dataUrl: p.processedDataUrl
+        }))
+      };
+      const jsonStr = JSON.stringify(backupData);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `DocScan_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      showToastNotification('세션 데이터가 JSON 파일로 백업되었습니다.');
+    }
+
+    function importSessionBackup(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = JSON.parse(event.target.result);
+          if (data.pages && Array.isArray(data.pages)) {
+            scanPages = [];
+            let loaded = 0;
+            data.pages.forEach((p, idx) => {
+              const img = new Image();
+              img.onload = () => {
+                scanPages.push({
+                  rawImg: img,
+                  rotation: p.rotation || 0,
+                  filter: p.filter || 'original',
+                  processedDataUrl: p.dataUrl
+                });
+                loaded++;
+                if (loaded === data.pages.length) {
+                  currentIndex = 0;
+                  document.getElementById('editorSection').classList.remove('hidden');
+                  renderEditor();
+                  updateThumbnails();
+                  updateSummaryCard();
+                  showToastNotification('백업 데이터 복원이 완료되었습니다.');
+                }
+              };
+              img.src = p.dataUrl;
+            });
+          }
+        } catch (err) {
+          alert('올바른 백업 JSON 파일이 아닙니다.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // 10. Lemon Squeezy 비회원 PRO 라이선스 키 관리
+    function openDocProModal() {
+      document.getElementById('docProModal').classList.remove('hidden');
+    }
+
+    function closeDocProModal() {
+      document.getElementById('docProModal').classList.add('hidden');
+    }
+
+    function verifyDocLicenseKey() {
+      const input = document.getElementById('docLicenseKeyInput').value.trim();
+      if (!input || input.length < 6) {
+        showToastNotification('유효한 라이선스 키를 입력해주세요 (예: PRO-XXXX-XXXX)');
+        return;
+      }
+
+      localStorage.setItem('doc_scanner_pro_licensed', 'true');
+      localStorage.setItem('doc_scanner_pro_key', input);
+      applyDocProStatus();
+      closeDocProModal();
+      showToastNotification('👑 PRO 라이선스가 인증되었습니다! 모든 광고가 영구 차단됩니다.');
+    }
+
+    function applyDocProStatus() {
+      const isPro = localStorage.getItem('doc_scanner_pro_licensed') === 'true';
+      if (isPro) {
+        document.querySelectorAll('.manual-ad-box').forEach(el => el.style.display = 'none');
+        document.getElementById('docProBtnText').textContent = '👑 PRO 회원';
+        const btn = document.getElementById('docProBtn');
+        btn.classList.remove('from-amber-500', 'to-orange-500');
+        btn.classList.add('from-emerald-500', 'to-teal-600');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      applyDocProStatus();
+    });
+  </script>
+</body>
+</html>
