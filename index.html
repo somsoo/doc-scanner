@@ -2,6 +2,11 @@
 
 <html lang="ko">
 <head>
+    <!-- Performance Optimization: Resource Preconnect -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+
 <link href="apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
 <title>웹 문서 스캐너 | 워터마크·로그인 없는 무료 스마트폰 영수증·신분증 PDF 스캔 (DocScan Web)</title>
@@ -26,7 +31,18 @@
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     .filter-btn-active { border-color: #059669; background-color: #ecfdf5; color: #065f46; font-weight: 700; }
-  </style>
+  
+        /* U3 Accessibility: Global Keyboard Focus Ring Standard */
+        :focus-visible {
+            outline: 2px solid #3b82f6 !important;
+            outline-offset: 2px !important;
+        }
+        input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible {
+            outline: 2px solid #2563eb !important;
+            outline-offset: 1px !important;
+        }
+    
+    </style>
 <style id="layout-shield">
   html, body {
     max-width: 100%;
@@ -156,7 +172,7 @@
 <i class="fa-solid fa-images text-emerald-600"></i>
 <span>갤러리/사진 선택</span>
 </button>
-<input accept="image/*" class="hidden" id="fileUploadInput" multiple="" onchange="handleImageUpload(this.files)" type="file"/>
+<input accept="image/*" class="hidden" id="fileUploadInput" multiple="" onchange="handleImageUpload(this.files)" type="file" aria-label="Fileuploadinput" />
 </div>
 <!-- 카메라 실시간 스트림 영역 (카메라 켰을 때 노출) -->
 <div class="border-2 border-emerald-400 rounded-2xl overflow-hidden bg-black relative hidden" id="cameraContainer">
@@ -288,7 +304,7 @@
 <button class="flex-1 py-2 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 rounded-lg text-[11px] font-mono transition border border-slate-800" onclick="document.getElementById('importBackupInput').click()" type="button">
 <i class="fa-solid fa-upload mr-1"></i>백업 불러오기
               </button>
-<input accept=".json,application/json" class="hidden" id="importBackupInput" onchange="importSessionBackup(event)" type="file"/>
+<input accept=".json,application/json" class="hidden" id="importBackupInput" onchange="importSessionBackup(event)" type="file" aria-label="Importbackupinput" />
 </div>
 </div>
 <!-- 보안 확인 문구 -->
@@ -436,7 +452,7 @@
 <p>✓ 최대 3대 기기(PC/태블릿/스마트폰) 영구 인증</p>
 </div>
 <div class="space-y-2">
-<input class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-center uppercase focus:ring-2 focus:ring-amber-500 outline-none" id="docLicenseKeyInput" placeholder="라이선스 키 입력 (예: PRO-XXXX-XXXX)" type="text"/>
+<input class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-center uppercase focus:ring-2 focus:ring-amber-500 outline-none" id="docLicenseKeyInput" placeholder="라이선스 키 입력 (예: PRO-XXXX-XXXX)" type="text" aria-label="라이선스 키 입력 (예: PRO-XXXX-XXXX)" />
 <button class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition" id="btnVerifyDocLicense" onclick="verifyDocLicenseKey()" type="button">
           라이선스 키 인증하기
         </button>
