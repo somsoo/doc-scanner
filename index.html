@@ -115,6 +115,15 @@
 }
   </script>
 <meta content="https://doc-scanner.enjoy-onepage.com/og-image.png" property="og:image"/><meta content="summary_large_image" name="twitter:card"/><meta content="웹 문서 스캐너 - 워터마크 없는 100% 무료 PDF 스캔" name="twitter:title"/><meta content="서버 전송 0바이트! 브라우저 로컬에서 안전하게 영수증, 신분증, 서류를 스캔하고 고화질 PDF로 저장하세요." name="twitter:description"/><meta content="https://doc-scanner.enjoy-onepage.com/og-image.png" name="twitter:image"/><style id="mobile-hardening-shield">
+  /* 모바일 한글 단어 단위 줄바꿈 보존 & 버튼 텍스트 단일행 쉴드 */
+  body, h1, h2, h3, h4, p, span, label {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+  button, [role="button"], a.btn {
+    white-space: nowrap;
+    word-break: keep-all;
+  }
   @media (max-width: 640px) {
     input, select, textarea {
       font-size: 16px !important;
