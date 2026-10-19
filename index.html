@@ -8,7 +8,7 @@
 
 <link href="apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>웹 문서 스캐너 | 워터마크 없는 영수증·신분증 PDF 스캔</title>
+<title>웹 문서 스캐너 | 워터마크 없는 영수증·신분증 PDF</title>
 <meta content="카메라 촬영이나 사진 업로드로 문서를 보정해 여러 페이지 PDF로 만듭니다. 계정·워터마크·구독 없는 로컬 스캐너입니다." name="description"/>
 <link href="https://doc-scanner.enjoy-onepage.com/" rel="canonical"/>
 <meta content="웹 문서 스캐너 - 워터마크 없는 100% 무료 PDF 스캔" property="og:title"/>
@@ -133,6 +133,25 @@
 </style>
     <link rel="alternate" type="application/rss+xml" title="웹 문서 스캐너 | 워터마크 없는 영수증·신분증 PDF 스캔" href="https://doc-scanner.enjoy-onepage.com/rss.xml">
     <link rel="sitemap" type="application/xml" href="https://doc-scanner.enjoy-onepage.com/sitemap.xml">
+<script id="math-guard">
+// Global Math & DOM Output Guard: prevents NaN / Infinity leaks to UI
+(function() {
+  const origToLocaleString = Number.prototype.toLocaleString;
+  Number.prototype.toLocaleString = function(locales, options) {
+    if (!Number.isFinite(this.valueOf())) return '0';
+    return origToLocaleString.call(this, locales, options);
+  };
+  const origToFixed = Number.prototype.toFixed;
+  Number.prototype.toFixed = function(digits) {
+    if (!Number.isFinite(this.valueOf())) return '0';
+    return origToFixed.call(this, digits);
+  };
+})();
+</script>
+<style id="ad-cls-shield">
+  .ad-bottom { min-height: 280px !important; }
+  .ad-bottom ins { min-height: 280px !important; }
+</style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
 <!-- 상단 슬림 띠배너 (Top Slim Banner: 3824727725, 50~60px 고정) -->
@@ -471,7 +490,14 @@
     
 
   
-    <!-- E-E-A-T FAQ Section (16-5 헌법 준수) -->
+    <!-- ADSENSE START: mid -->
+<div class="ad-box ad-mid" style="max-width:1080px;margin:16px auto;padding:0 14px;text-align:center;">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2228289204702106" data-ad-slot="1186914926" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- ADSENSE END: mid -->
+
+<!-- E-E-A-T FAQ Section (16-5 헌법 준수) -->
     <section class="mt-8 mb-8 space-y-3">
       <h2 class="text-xl font-bold text-gray-900 mb-4">자주 묻는 질문 (FAQ)</h2>
       <details class="bg-gray-50 p-4 rounded-xl border border-gray-200 group">
@@ -498,7 +524,7 @@
   </main>
 <!-- 하단 대형 배너 (푸터 직전: 3416334507, 1:1 푸시 규격) -->
 <div class="manual-ad-box ad-bottom-banner w-full max-w-5xl mx-auto mb-8 text-center overflow-hidden">
-<ins class="adsbygoogle" data-ad-client="ca-pub-2228289204702106" data-ad-format="auto" data-ad-slot="3416334507" data-full-width-responsive="true" style="display:block"></ins>
+<ins class="adsbygoogle" data-ad-client="ca-pub-2228289204702106" data-ad-format="auto" data-ad-slot="3416334507" data-full-width-responsive="true" style="display:block;min-height:280px;"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>
 
